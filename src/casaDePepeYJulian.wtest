@@ -1,0 +1,63 @@
+import casa.*
+
+describe "romper viveres y consultas a casa" {
+
+	test "romper algo de 1000 pesos de la casa" {
+		casaDePepeYJulian.sumarAlMontoDeReparacion(1000)
+		assert.that(casaDePepeYJulian.tieneViveresSuficientes())
+		assert.that(casaDePepeYJulian.hayQueReparar())
+		assert.notThat(casaDePepeYJulian.casaEnOrden())
+	}
+
+}
+
+describe "deposito de cuentas bancarias" {
+
+	test "depositar en cuenta con gastos, con 20 pesos por operacion, 1000 pesos. Debe de quedar 980" {
+		cuentaConGastos.costoDeOperacion(20)
+		cuentaConGastos.depositar(1000)
+		assert.equals(980, cuentaConGastos.saldo())
+	}
+
+	test "depositar en cuenta combinada con primaria cuenta con gastos con 50 pesos por operacion y secundaria cuenta corriente ya con 500 pesos de saldo
+	      100 pesos, extraer 200 .En cuenta primaria queda 50 en cuenta secundaria queda 300, en total 350" {
+		cuentaCombinada.cuentaPrimaria(cuentaConGastos)
+		cuentaCombinada.cuentaSecundaria(cuentaCorriente)
+		cuentaConGastos.costoDeOperacion(50)
+		cuentaCorriente.depositar(500)
+		cuentaCombinada.depositar(100)
+		cuentaCombinada.extraer(200)
+		assert.equals(50, cuentaConGastos.saldo())
+		assert.equals(300, cuentaCorriente.saldo())
+		assert.equals(350, cuentaCombinada.saldo())
+	}
+
+}
+
+describe "mantenimiento  de la casa" {
+
+	test "la casa de julian y pepe tiene 50 de viveres monto de reparacion en 0 estrategia de ahorro minimo e indispensable deberia quedar igual" {
+		casaDePepeYJulian.montoDeReparaciones(0)
+		casaDePepeYJulian.viveresDeCasa(50)
+		casaDePepeYJulian.estrategiaDeAhorro(minimoEIndispensable)
+		casaDePepeYJulian.mantenimiento()
+		assert.equals(0, casaDePepeYJulian.montoDeReparaciones())
+		assert.equals(50, casaDePepeYJulian.viveresDeCasa())
+	}
+
+	test "la casa de julian y pepe tiene 50% de viveres,necesita 100 pesos para reparaciones,tiene asociada la cuenta corriente con 1000 pesos de saldo
+		  y una estrategia de ahorro Full,despues del mantenimiento queda con 90% de viveres, mantiene los 100 pesos para reparaciones, 
+		  y la cuenta corriente queda con 800 pesos." {
+		casaDePepeYJulian.viveresDeCasa(50)
+		casaDePepeYJulian.montoDeReparaciones(100)
+		casaDePepeYJulian.cuentaParaGastos(cuentaCorriente)
+		cuentaCorriente.depositar(1000)
+		casaDePepeYJulian.estrategiaDeAhorro(full)
+		casaDePepeYJulian.mantenimiento()
+		assert.equals(90, casaDePepeYJulian.viveresDeCasa())
+		assert.equals(100, casaDePepeYJulian.montoDeReparaciones())
+		assert.equals(800, cuentaCorriente.saldo())
+	}
+
+}
+
